@@ -98,34 +98,44 @@ const Terminal = () => {
 						console.log(
 							"Up arrow key pressed"
 						);
-						if (commands.length > 0) {
-							// Decrement the index to show the previous command
-							setCurrentCommandIndex(
-								(prevIndex) =>
-									Math.max(
-										0,
-										prevIndex -
-											1
-									)
+						setCommands((prevCommands) => {
+							console.log(
+								"Current commands:",
+								prevCommands
 							);
-						}
+							const newIndex =
+								Math.max(
+									0,
+									currentCommandIndex -
+										1
+								);
+							setCurrentCommandIndex(
+								newIndex
+							);
+							return prevCommands;
+						});
 					} else if (e.key === "\x1B[B") {
 						// Check if Down arrow key is pressed
 						console.log(
 							"Down arrow key pressed"
 						);
-						if (commands.length > 0) {
-							// Increment the index to show the next command
-							setCurrentCommandIndex(
-								(prevIndex) =>
-									Math.min(
-										commands.length -
-											1,
-										prevIndex +
-											1
-									)
+						setCommands((prevCommands) => {
+							console.log(
+								"Current commands:",
+								prevCommands
 							);
-						}
+							const newIndex =
+								Math.min(
+									commands.length -
+										1,
+									currentCommandIndex +
+										1
+								);
+							setCurrentCommandIndex(
+								newIndex
+							);
+							return prevCommands;
+						});
 					} else if (e.key) {
 						terminalInstance.current.write(
 							e.key
