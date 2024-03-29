@@ -8,7 +8,6 @@ const Terminal = () => {
   const terminalRef = useRef(null);
   const fitAddon = useRef(null);
   const terminalInstance = useRef(null);
-  const onDataHandlerAttached = useRef(false); // Flag to track whether onData handler is attached
 
   useEffect(() => {
     console.log("Initializing terminal...");
@@ -16,7 +15,9 @@ const Terminal = () => {
     const initializeTerminal = () => {
       console.log("Inside initializeTerminal");
       try {
-        const terminal = new XTerminal();
+        const terminal = new XTerminal({
+          cursorBlink: true // Enable blinking cursor
+        });
         fitAddon.current = new FitAddon();
         terminal.loadAddon(fitAddon.current);
         terminal.open(terminalRef.current);
@@ -30,26 +31,22 @@ const Terminal = () => {
 
         console.log("Terminal initialized successfully.");
 
-        if (!onDataHandlerAttached.current) { // Check if event handler is already attached
-          console.log("Setting up onData handler...");
-          const onDataHandler = (e) => {
-            console.log("Inside onDataHandler");
-            console.log("Received event:", e);
-
-            if (terminalInstance.current && e.keyCode) {
-              const char = String.fromCharCode(e.keyCode);
-              terminalInstance.current.write(char);
-              setInput(prevInput => prevInput + char);
-            }
-          };
-
-          terminal.attachCustomKeyEventHandler(onDataHandler);
-          onDataHandlerAttached.current = true; // Set flag to true after attaching event handler
-        }
+        terminal.onKey(e => {
+          console.log("Received key event:", e);
+          if (e.key === '\r') { // Check if Enter key is pressed
+            terminalInstance.current.write('\r\n'); // Write a new line
+            // Handle the command execution here
+            console.log("Executing command:", input);
+            setInput(''); // Clear the input buffer after executing the command
+          } else if (e.key) {
+            terminalInstance.current.write(e.key);
+            setInput(prevInput => prevInput + e.key);
+          }
+        });
 
         // Cleanup function
         return () => {
-          console.log("Cleaning up onData handler...");
+          console.log("Cleaning up terminal...");
           if (terminalInstance.current) {
             terminalInstance.current.dispose();
             console.log("Removed terminal instance.");
@@ -67,7 +64,7 @@ const Terminal = () => {
     };
   }, []);
 
-  return <div ref={terminalRef} style={{ width: '100%', height: '100%' }} />;
+  return <div ref={terminalRef} style={{ width: '100vw', height: '100vh' }} />;
 };
 
 export default Terminal;
