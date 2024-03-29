@@ -2,12 +2,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Terminal as XTerminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import 'xterm/css/xterm.css';
+import CommandHistory from './CommandHistory'; // Import CommandHistory component
+import './Terminal.css'; // Import CSS file for styling
 
 const Terminal = () => {
-  const [input, setInput] = useState('');
+  const [commands, setCommands] = useState([]); // State to store command history
   const terminalRef = useRef(null);
   const fitAddon = useRef(null);
   const terminalInstance = useRef(null);
+  let inputBuffer = ''; // Input buffer to store user input
 
   useEffect(() => {
     console.log("Initializing terminal...");
@@ -37,13 +40,21 @@ const Terminal = () => {
         terminal.onKey(e => {
           console.log("Received key event:", e);
           if (e.key === '\r') { // Check if Enter key is pressed
-            terminalInstance.current.write(`\r\n> ${input}`); // Write a new line with ">" character
-            // Handle the command execution here
-            console.log("Executing command:", input);
-            setInput(''); // Clear the input buffer after executing the command
+            console.log("Input value:", inputBuffer);
+            const trimmedInput = inputBuffer.trim();
+            if (trimmedInput) { // Check if the input is not empty after trimming
+              setCommands(prevCommands => {
+                console.log("Previous commands:", prevCommands);
+                const updatedCommands = [...prevCommands, trimmedInput];
+                console.log("Updated commands:", updatedCommands);
+                return updatedCommands;
+              }); // Add full input text as command to history
+              terminalInstance.current.write(`\r\n> `); // Write a new line with ">" character
+            }
+            inputBuffer = ''; // Clear the input buffer after executing the command
           } else if (e.key) {
             terminalInstance.current.write(e.key);
-            setInput(prevInput => prevInput + e.key);
+            inputBuffer += e.key; // Add the key to the input buffer
           }
         });
 
@@ -67,7 +78,14 @@ const Terminal = () => {
     };
   }, []);
 
-  return <div ref={terminalRef} style={{ width: '100vw', height: '100vh' }} />;
+  return (
+    <div className="terminal-container">
+      <div className="terminal-pane" ref={terminalRef}></div>
+      <div className="command-history-pane">
+        <CommandHistory commands={commands} />
+      </div>
+    </div>
+  );
 };
 
 export default Terminal;
