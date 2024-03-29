@@ -1,5 +1,5 @@
-// src/components/AuthPage.js
 import React, { useState } from 'react';
+import './AuthPage.css'; // Import CSS file for styling
 
 const AuthPage = ({ onLogin }) => {
   const [username, setUsername] = useState('');
@@ -12,11 +12,13 @@ const AuthPage = ({ onLogin }) => {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
-      <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-      <button onClick={handleLogin}>Login</button>
+    <div className="auth-container"> {/* Apply class for styling */}
+      <h2 className="auth-header">Login</h2> {/* Apply class for styling */}
+      <div className="auth-form"> {/* Apply class for styling */}
+        <input type="text" className="auth-input" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
+        <input type="password" className="auth-input" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <button className="auth-button" onClick={handleLogin}>Login</button> {/* Apply class for styling */}
+      </div>
     </div>
   );
 };
