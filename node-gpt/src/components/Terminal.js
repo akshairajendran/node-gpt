@@ -25,6 +25,9 @@ const Terminal = () => {
 
         terminalInstance.current = terminal;
 
+        // Add ">" character to the first line
+        terminalInstance.current.write('> ');
+
         const fitTerminal = () => fitAddon.current.fit();
         window.addEventListener('resize', fitTerminal);
         fitTerminal();
@@ -34,7 +37,7 @@ const Terminal = () => {
         terminal.onKey(e => {
           console.log("Received key event:", e);
           if (e.key === '\r') { // Check if Enter key is pressed
-            terminalInstance.current.write('\r\n'); // Write a new line
+            terminalInstance.current.write(`\r\n> ${input}`); // Write a new line with ">" character
             // Handle the command execution here
             console.log("Executing command:", input);
             setInput(''); // Clear the input buffer after executing the command
