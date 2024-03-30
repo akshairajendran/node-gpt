@@ -2,3 +2,26 @@
 	background-color: #000000; /* Set background color to black */
 }
 
+.command-history-pane {
+  width: 20%;
+  height: 100%;
+  overflow-y: auto; /* Add scrollbar if content exceeds height */
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #f4f4f4; /* Adjust background color as needed */
+  border-left: 1px solid #ccc; /* Add border on the left side */
+}
+
+.terminal-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.terminal-pane {
+  flex: 1;
+}
+
+
